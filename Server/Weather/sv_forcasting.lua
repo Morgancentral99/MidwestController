@@ -1,17 +1,26 @@
-weatherAllowed = {0 = "EXTRASUNNY"}
+
 --Get Random Number 0 to 1
 --vars
 --Is Warm Enables Rain, thunder Disables, Blizzard, Snowlight, xmas
  isWarm = false;
 --isCold Enables Blizzard, SnowLight, xmas Disables Rain, Thunder
  isCold = true;
-Citizen.CreateThread(function()
-  weatherAllowed = SeasonsController.returnWeatherTypesAllowed();
-end)
 
 
+ TodaysForcastPrimary = "SUNNY";
+ TodaysForcastSeconary = "RAIN";
+ TodaysForcastSeconaryChance = 50;
+ TodayisBlizzard = false;
 
+ TomorrowsForcastPrimary = "SUNNY";
+ TomorrowsForcastSecondary = "SUNNY";
+ TomorrowsForcastSecondaryChance = 50;
+ TomorrowisBlizzard = false;
 
+ ThirdDayForcastPrimary = "Overcast";
+ ThirdDayForcastSecondary = "Rain";
+ ThirdDayForcastSecondaryChance = 50;
+ ThirdDayisBlizzard = false;
 
 
 
@@ -35,69 +44,111 @@ isBlizzardToday = false;
 AddEventHandler('sv_forcastNewDay', function()
 
 --New Day
-  TodayPrimaryWeather = WeatherData.TomorrowsForcastPrimary;
-  TodaySeconaryWeather = WeatherData.TomorrowsForcastSecondary;
-  TodaySeconaryWeatherChance = WeatherData.TomorrowsForcastSecondaryChance;
-  isBlizzardToday = WeatherData.TomorrowisBlizzard;
+print(TodayPrimaryWeather)
+print(TodaySeconaryWeather)
+print(TodaySeconaryWeatherChance)
+  TodayPrimaryWeather = TomorrowsForcastPrimary;
+  TodaySeconaryWeather = TomorrowsForcastSecondary;
+  TodaySeconaryWeatherChance = TomorrowsForcastSecondaryChance;
+  isBlizzardToday = TomorrowisBlizzard;
   local random = math.random(700);
-  if(random <= 50 && random >= 150) then {
+  print(random)
+  if(random >= 50 and random >= 150) then
     TodayThirdWeather = "FOG"
-  end else
+
+
+  else
     TodayThirdWeather = "NONE"
   end
   if(TodayThirdWeather == "NONE") then
 
   end
+
 -- New Tomorrow
-WeatherData.TomorrowsForcastPrimary = WeatherData.ThirdDayForcastPrimary;
-WeatherData.TomorrowsForcastSecondary = WeatherData.ThirdDayForcastSecondary;
-WeatherData.TomorrowsForcastSecondaryChance = WeatherData.ThirdDayForcastSecondaryChance;
-WeatherData.TomorrowisBlizzard = WeatherData.ThirdDayisBlizzard;
+TomorrowsForcastPrimary = ThirdDayForcastPrimary;
+TomorrowsForcastSecondary = ThirdDayForcastSecondary;
+TomorrowsForcastSecondaryChance = ThirdDayForcastSecondaryChance;
+TomorrowisBlizzard = ThirdDayisBlizzard;
 -- ThirdDayWeather
 local WeatherRandom = math.random(2000);
 
-if(WeatherRandom <= 300 && WeatherRandom >= 400) then
+if(WeatherRandom > 300 and WeatherRandom < 400) then
+  ThirdDayForcastPrimary = "OVERCAST";
+  print("Overcast300-400")
 --Overcast
 end
 
 --Sunny
-if(WeatherRandom <= 0 && WeatherRandom >= 300) then
+if(WeatherRandom > 0 and WeatherRandom < 300) then
+  ThirdDayForcastPrimary = "SUNNY";
+  print("SUNNY0-300")
 --Sunny
 end
-if(WeatherRandom <= 600 && WeatherRandom >= 1000) then
+if(WeatherRandom > 600 and WeatherRandom < 1000) then
+  ThirdDayForcastPrimary = "SUNNY";
+  print("SUNNY600-1000")
 -- Sunny
 end
-if(WeatherRandom <= 1500 && WeatherRandom >= 1800) then
+if(WeatherRandom > 1500 and WeatherRandom < 1800) then
+  ThirdDayForcastPrimary = "SUNNY";
+  print("SUNNY1500-1800")
 --Sunny
 end
 
 --Secondary
-if(WeatherRandom <= 770 && WeatherRandom >= 850) then
-  chance = GetRandomChance(100) / 10;
+  chance = GetRandomChance(100);
+if(WeatherRandom > 770 and WeatherRandom < 850) then
+
+  if isWarm == true then
+    ThirdDayForcastSecondary = "RAIN";
+    print("Rain770-850")
+    ThirdDayForcastSecondaryChance = chance;
+  end
+  if isCold == true then
+    print("Snow770-850")
+    ThirdDayForcastSecondary = "SNOW";
+    ThirdDayForcastSecondaryChance = chance;
+  end
 --Rain
 --Snowlight
-end
 
-if(WeatherRandom <= 1000 && WeatherRandom >= 1300) then
+
+elseif (WeatherRandom > 1000 and WeatherRandom < 1300) then
+  if isWarm == true then
+    print("Thunderstorm1000-1300")
+    ThirdDayForcastSecondary = "THUNDERSTORM";
+    ThirdDayForcastSecondaryChance = chance;
+  end
  --Thunderstorm
-end
 
-if(WeatherRandom <= 1300 && WeatherRandom >= 1350) then
+
+elseif (WeatherRandom > 1300 and WeatherRandom < 1350) then
+  if isCold == true then
+    print("Blizzard1300-1350")
+    ThirdDayisBlizzard = true;
+    ThirdDayForcastPrimary = "OVERCAST";
+    ThirdDayForcastSecondary = "BLIZZARD";
+    ThirdDayForcastSecondaryChance = chance;
+  end
 --BLIZZARD IF ENABLED
+ else
+   print("SUNNYELSE")
+  ThirdDayForcastSecondary = "SUNNY";
 end
-
-
+print("Primary: " .. ThirdDayForcastPrimary ..  " Secondary: " .. ThirdDayForcastSecondary .. " Chance: " .. ThirdDayForcastSecondaryChance);
+--
 end)
 
-AddEventHandler('sv_changeTemp', function(in)
-  if (in == 0) then {
+AddEventHandler('sv_changeTemp', function(i)
+  if (i == 0) then
     isWarm = true;
     isCold = false;
-  }
-  if(in == 1) then {
+
+  else if(i == 1) then
     isCold = true;
     isWarm = false;
-  }
+  end
+end
 end)
 
 
@@ -119,50 +170,3 @@ end)
     local random = math.random(i)
     return random
   end
-
---old just leave for now
-
-
-
-
-function DayForcast()
-  Server.WeatherForNextDay = "CLEAR"
-  Server.WeatherForTodayPercent = 0.0132
-  TriggerClientEvent('chatMessage', -1, "Forcast For Tomorrow: ".. WeatherForNextDay)
-end
-
-
-local space = {
-    {"CLEAR", 80},
-    {"OVERCAST", 10},
-    {"RAIN", 5},
-    {"THUNDER", 5},
-}
-
-function chooseWithChance(args)
-     local argCount = #args
-     local sumOfChances = 0
-
-     for i = 1, argCount do
-         sumOfChances = sumOfChances + args[i]
-     end
-
-     local randomDouble = math.random(sumOfChances)
-
-     while (sumOfChances > randomDouble) do
-         sumOfChances = sumOfChances - args[argCount]
-         argCount = argCount - 1
-     end
-
-     return (argCount)
- end
-
-function drawRand()
-    local probabilities = {}
-
-    for key,value in pairs(space) do
-       probabilites.Add(value)
-    end
-
-    return space[chooseWithChance(probabilites)]
-end

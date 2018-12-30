@@ -3,7 +3,7 @@ WeatherNowTimeLeft = 0;
 
 --
 TodaysForcastPrimary = "SUNNY";
-TodaysForcastSeconary = "Rain";
+TodaysForcastSeconary = "RAIN";
 TodaysForcastSeconaryChance = 50;
 TodayisBlizzard = false;
 
@@ -16,3 +16,7 @@ ThirdDayForcastPrimary = "Overcast";
 ThirdDayForcastSecondary = "Rain";
 ThirdDayForcastSecondaryChance = 50;
 ThirdDayisBlizzard = false;
+--Server 1charlie
+
+--Seasons
+Season2 = "WINTER";

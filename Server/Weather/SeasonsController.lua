@@ -7,7 +7,7 @@ local daysPerSeason = 1;--17 is half
  isWarm = false;
 --isCold Enables Blizzard, SnowLight, xmas Disables Rain, Thunder
  isCold = true;
-local day = 0;
+ day = 0;
 
 AddEventHandler("sv_NewDay", function(DayNum)
   day = DayNum;
@@ -43,6 +43,8 @@ AddEventHandler("sv_NewDay", function(DayNum)
       whatSeasonIsItNow = "WINTER";
       whatSeasonIsItNowID = 0;
     }
+    print("Season " .. whatSeasonIsItNow .. " and the day is: " .. day .. "!")
+    MySQL.Async.execute("UPDATE `weatherseasons` SET `Season`=@Season, `DayNum`=@Day WHERE ID = 0;", {['@Season'] = whatSeasonIsItNow, ['@Day'] = day});
   }
 
 end)
